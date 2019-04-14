@@ -1,0 +1,45 @@
+From 62eef45e9dcb5584bf653e765497b1d5da717573 Mon Sep 17 00:00:00 2001
+Message-Id: <62eef45e9dcb5584bf653e765497b1d5da717573.1544283342.git.spookcity138@gmail.com>
+From: Rick M <spookcity138@gmail.com>
+Date: Sat, 8 Dec 2018 16:34:38 +0100
+Subject: [PATCH] Disable AOD by default
+
+Change-Id: I52a8f15a4241ba78913dfd20c915d7c00d1cf77f
+---
+ core/res/res/values/config.xml | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/core/res/res/values/config.xml b/core/res/res/values/config.xml
+index edeaa1e4ec3..cfbcd5df42c 100644
+--- a/core/res/res/values/config.xml
++++ b/core/res/res/values/config.xml
+@@ -379,7 +379,7 @@
+                [IP config] Optional. If empty or not specified - DHCP will be used, otherwise
+                    use the following format to specify static IP configuration:
+ 		       ip=<ip-address/mask> gateway=<ip-address> dns=<comma-sep-ip-addresses>
+-                       domains=<comma-sep-domains> 
++                       domains=<comma-sep-domains>
+          -->
+     <string-array translatable="false" name="config_ethernet_interfaces">
+         <!--
+@@ -2117,7 +2117,7 @@
+ 
+     <!-- Control whether the always on display mode is enabled by default. This value will be used
+          during initialization when the setting is still null. -->
+-    <bool name="config_dozeAlwaysOnEnabled">true</bool>
++    <bool name="config_dozeAlwaysOnEnabled">false</bool>
+ 
+     <!-- Whether the display blanks itself when transitioning from a doze to a non-doze state -->
+     <bool name="config_displayBlanksAfterDoze">false</bool>
+@@ -3515,7 +3515,7 @@
+ 
+     <!-- Brand value for attestation of misprovisioned device. -->
+     <string name="config_misprovisionedBrandValue" translatable="false"></string>
+-  
++
+     <!-- Component name for default assistant on this device -->
+     <string name="config_defaultAssistantComponentName"></string>
+ 
+-- 
+2.19.2
+

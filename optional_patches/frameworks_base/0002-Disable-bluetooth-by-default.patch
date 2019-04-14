@@ -1,0 +1,27 @@
+From 3785fb84e388fc0dde6707d476429aaf76ab1b16 Mon Sep 17 00:00:00 2001
+Message-Id: <3785fb84e388fc0dde6707d476429aaf76ab1b16.1544283145.git.spookcity138@gmail.com>
+From: Rick M <spookcity138@gmail.com>
+Date: Sat, 8 Dec 2018 16:32:16 +0100
+Subject: [PATCH] Disable bluetooth by default
+
+Change-Id: I9f5bcba753ef097bf71b48840801d9fe6d155f6c
+---
+ packages/SettingsProvider/res/values/defaults.xml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/packages/SettingsProvider/res/values/defaults.xml b/packages/SettingsProvider/res/values/defaults.xml
+index e1a602b53d9..95bc0d5ffcc 100644
+--- a/packages/SettingsProvider/res/values/defaults.xml
++++ b/packages/SettingsProvider/res/values/defaults.xml
+@@ -36,7 +36,7 @@
+     <fraction name="def_window_transition_scale">100%</fraction>
+     <bool name="def_haptic_feedback">true</bool>
+ 
+-    <bool name="def_bluetooth_on">true</bool>
++    <bool name="def_bluetooth_on">false</bool>
+     <bool name="def_wifi_display_on">false</bool>
+     <bool name="def_install_non_market_apps">false</bool>
+     <bool name="def_package_verifier_enable">true</bool>
+-- 
+2.19.2
+

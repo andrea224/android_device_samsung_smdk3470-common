@@ -1,0 +1,27 @@
+From 5b3e8fba1003fb1a3164be00a79b24cc6afc296c Mon Sep 17 00:00:00 2001
+Message-Id: <5b3e8fba1003fb1a3164be00a79b24cc6afc296c.1551266742.git.spookcity138@gmail.com>
+From: Rick M <spookcity138@gmail.com>
+Date: Wed, 27 Feb 2019 12:25:34 +0100
+Subject: [PATCH] Enable dark mode by default
+
+Change-Id: I653c0e5701b045976d7377dba8cc38a53dd84b65
+---
+ core/res/res/values/config.xml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/core/res/res/values/config.xml b/core/res/res/values/config.xml
+index cf9bd122baf..d3883726732 100644
+--- a/core/res/res/values/config.xml
++++ b/core/res/res/values/config.xml
+@@ -928,7 +928,7 @@
+              1 - MODE_NIGHT_NO
+              2 - MODE_NIGHT_YES
+     -->
+-    <integer name="config_defaultNightMode">1</integer>
++    <integer name="config_defaultNightMode">2</integer>
+ 
+     <!-- Boolean indicating whether the HWC setColorTransform function can be performed efficiently
+          in hardware. -->
+-- 
+2.21.0
+

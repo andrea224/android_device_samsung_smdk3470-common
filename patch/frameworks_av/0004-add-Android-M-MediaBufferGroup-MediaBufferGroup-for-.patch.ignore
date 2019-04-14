@@ -1,0 +1,45 @@
+From 934f2e111ac6b384aaa1bd184e99e7d918d6be50 Mon Sep 17 00:00:00 2001
+From: Tobias Gunkel <hennymcc@yahoo.de>
+Date: Sat, 18 Feb 2017 02:58:33 +0100
+Subject: [PATCH] add Android M MediaBufferGroup:MediaBufferGroup() for
+ libwvm.so
+
+Change-Id: I54da9082c98e4e82d8533d99205ec250d6da31ef
+---
+ media/libmediaextractor/MediaBufferGroup.cpp | 4 ++++
+ media/libstagefright/include/MediaBufferGroup.h      | 4 +++-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/media/libmediaextractor/MediaBufferGroup.cpp b/media/libmediaextractor/MediaBufferGroup.cpp
+index cb62d92..6702cf2 100644
+--- a/media/libmediaextractor/MediaBufferGroup.cpp
++++ b/media/libmediaextractor/MediaBufferGroup.cpp
+@@ -32,6 +32,10 @@ constexpr T MIN(const T &a, const T &b) { return a <= b ? a : b; }
+ static const size_t kSharedMemoryThreshold = MIN(
+         (size_t)MediaBuffer::kSharedMemThreshold, (size_t)(4 * 1024));
+
++MediaBufferGroup::MediaBufferGroup() :
++    mGrowthLimit(0) {
++}
++
+ struct MediaBufferGroup::InternalData {
+    Mutex mLock;
+ }
+diff --git a/media/libstagefright/include/MediaBufferGroup.h b/media/libstagefright/include/MediaBufferGroup.h
+index 3051406..96439fc 100644
+--- a/media/libstagefright/include/MediaBufferGroup.h
++++ b/media/libstagefright/include/MediaBufferGroup.h
+@@ -29,7 +29,9 @@ class MetaData;
+
+ class MediaBufferGroup : public MediaBufferObserver {
+ public:
+-    MediaBufferGroup(size_t growthLimit = 0);
++    MediaBufferGroup();
++
++    MediaBufferGroup(size_t growthLimit);
+
+     // create a media buffer group with preallocated buffers
+     MediaBufferGroup(size_t buffers, size_t buffer_size, size_t growthLimit = 0);
+--
+2.7.4
+

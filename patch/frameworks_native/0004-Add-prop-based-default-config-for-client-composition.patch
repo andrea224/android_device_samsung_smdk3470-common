@@ -1,0 +1,68 @@
+From c8aa1b6d3c65e27b85f1d7092c64b2f48b2048a3 Mon Sep 17 00:00:00 2001
+Message-Id: <c8aa1b6d3c65e27b85f1d7092c64b2f48b2048a3.1551707631.git.spookcity138@gmail.com>
+From: Rick M <spookcity138@gmail.com>
+From: Chris <chris@cypheros.co>
+Date: Mon, 4 Mar 2019 14:52:35 +0100
+Subject: [PATCH] Add prop based default config for client composition
+
+Allows specifying the default state for client composition. This allows
+the device to ship with hw overlays disabled by default with no user
+interaction
+
+To use, set debug.sf.disable_hwcomposer to "true" in device properties
+
+Change-Id: I4f443a1cb7982d6c999d33805a84c90049f77a8d
+---
+ services/surfaceflinger/SurfaceFlinger.cpp | 9 +++++++--
+ services/surfaceflinger/SurfaceFlinger.h   | 1 +
+ 2 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/services/surfaceflinger/SurfaceFlinger.cpp b/services/surfaceflinger/SurfaceFlinger.cpp
+index edec18ad2..5fd5e7b7c 100644
+--- a/services/surfaceflinger/SurfaceFlinger.cpp
++++ b/services/surfaceflinger/SurfaceFlinger.cpp
+@@ -366,6 +366,11 @@ SurfaceFlinger::SurfaceFlinger() : SurfaceFlinger(SkipInitialization) {
+         // for production purposes later on.
+         setenv("TREBLE_TESTING_OVERRIDE", "true", true);
+     }
++
++
++    // Disables hardware overlay, backwards for disabling
++    mDebugPropDisableHWC = property_get_bool("debug.sf.disable_hwcomposer", false);
++    ALOGD_IF(mDebugPropDisableHWC, "Disabling hardware overlays");
+ }
+
+ void SurfaceFlinger::onFirstRef()
+@@ -2087,7 +2092,7 @@ void SurfaceFlinger::setUpHWComposer() {
+                     }
+
+                     layer->setGeometry(displayDevice, i);
+-                    if (mDebugDisableHWC || mDebugRegion) {
++                    if (mDebugDisableHWC || mDebugPropDisableHWC || mDebugRegion) {
+                         layer->forceClientComposition(hwcId);
+                     }
+                 }
+@@ -4462,7 +4467,7 @@ void SurfaceFlinger::dumpAllLocked(const Vector<String16>& args, size_t& index,
+     colorizer.bold(result);
+     result.append("h/w composer state:\n");
+     colorizer.reset(result);
+-    bool hwcDisabled = mDebugDisableHWC || mDebugRegion;
++    bool hwcDisabled = mDebugDisableHWC || mDebugPropDisableHWC || mDebugRegion;
+     result.appendFormat("  h/w composer %s\n",
+             hwcDisabled ? "disabled" : "enabled");
+     hwc.dump(result);
+diff --git a/services/surfaceflinger/SurfaceFlinger.h b/services/surfaceflinger/SurfaceFlinger.h
+index 463a551bf..3b64e1a41 100644
+--- a/services/surfaceflinger/SurfaceFlinger.h
++++ b/services/surfaceflinger/SurfaceFlinger.h
+@@ -839,6 +839,7 @@ private:
+     int mDebugRegion;
+     int mDebugDDMS;
+     int mDebugDisableHWC;
++    bool mDebugPropDisableHWC;
+     int mDebugDisableTransformHint;
+     volatile nsecs_t mDebugInSwapBuffers;
+     nsecs_t mLastSwapBufferTime;
+--
+2.21.0
+
