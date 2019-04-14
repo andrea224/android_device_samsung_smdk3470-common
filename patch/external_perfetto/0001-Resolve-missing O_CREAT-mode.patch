@@ -1,0 +1,24 @@
+From b73bf8234463820a9fd3ae31be90441fde99f3ac Mon Sep 17 00:00:00 2001
+From: Adrian DC <radian.dc@gmail.com>
+Date: Fri, 09 Mar 2018 07:59:58 +0100
+Subject: [PATCH] perfetto_cmd: Resolve missing O_CREAT mode
+
+ src/perfetto_cmd/perfetto_cmd.cc:359:65:
+  error: 'open' has superfluous mode bits; missing O_CREAT?
+
+Change-Id: Id051a878a93268c42cd4d3e664247b98ed40dc25
+---
+
+diff --git a/src/perfetto_cmd/perfetto_cmd.cc b/src/perfetto_cmd/perfetto_cmd.cc
+index 9614642..ebdd740 100644
+--- a/src/perfetto_cmd/perfetto_cmd.cc
++++ b/src/perfetto_cmd/perfetto_cmd.cc
+@@ -356,7 +356,7 @@
+     // If we are tracing to DropBox, there's no need to make a
+     // filesystem-visible temporary file.
+     // TODO(skyostil): Fall back to base::TempFile for older devices.
+-    fd.reset(open(kTempDropBoxTraceDir, O_TMPFILE | O_RDWR, 0600));
++    fd.reset(open(kTempDropBoxTraceDir, O_CREAT | O_TMPFILE | O_RDWR, 0600));
+     if (!fd) {
+       PERFETTO_ELOG("Could not create a temporary trace file in %s",
+                     kTempDropBoxTraceDir);

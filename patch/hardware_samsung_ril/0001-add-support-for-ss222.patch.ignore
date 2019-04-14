@@ -1,0 +1,101 @@
+From 8a93fa4ca1e70533fd0fe10c779d56484853cf2c Mon Sep 17 00:00:00 2001
+From: tobigun <hennymcc@yahoo.de>
+Date: Fri, 27 May 2016 13:29:42 +0200
+Subject: [PATCH 3/4] ril: add support for ss222 (G800F/Y/M)
+
+Change-Id: Id1dff668f979ede208a0defa83ab6f49b4b3e712
+---
+ ril/Android.mk                  |  2 +-
+ ril/libril/Android.mk           |  2 +-
+ ril/libril/ril.cpp              | 18 ++++++++++++++++++
+ ril/libsecril-client/Android.mk |  5 +++++
+ 4 files changed, 25 insertions(+), 2 deletions(-)
+
+diff --git a/ril/Android.mk b/ril/Android.mk
+index 0b76b81..f8a63be 100644
+--- a/ril/Android.mk
++++ b/ril/Android.mk
+@@ -20,7 +20,7 @@ ifeq ($(BOARD_VENDOR),samsung)
+ 
+ # libril
+ ifeq ($(BOARD_PROVIDES_LIBRIL),true)
+-ifneq ($(filter m7450 mdm9x35 ss333 tss310 xmm6260 xmm6262 xmm6360 xmm7260,$(BOARD_MODEM_TYPE)),)
++ifneq ($(filter m7450 mdm9x35 ss222 ss333 tss310 xmm6260 xmm6262 xmm6360 xmm7260,$(BOARD_MODEM_TYPE)),)
+ include $(RIL_PATH)/libril/Android.mk
+ endif
+ endif
+diff --git a/ril/libril/Android.mk b/ril/libril/Android.mk
+index 4651122..4fd34d8 100644
+--- a/ril/libril/Android.mk
++++ b/ril/libril/Android.mk
+@@ -28,7 +28,7 @@ endif
+ ifeq ($(BOARD_MODEM_TYPE),xmm6260)
+ LOCAL_CFLAGS := -DMODEM_TYPE_XMM6260
+ endif
+-ifneq ($(filter m7450 mdm9x35 ss333 tss310 xmm7260,$(BOARD_MODEM_TYPE)),)
++ifneq ($(filter m7450 mdm9x35 ss222 ss333 tss310 xmm7260,$(BOARD_MODEM_TYPE)),)
+ LOCAL_CFLAGS := -DSAMSUNG_NEXT_GEN_MODEM
+ endif
+ 
+diff --git a/ril/libril/ril.cpp b/ril/libril/ril.cpp
+index ceb91c0..3425391 100644
+--- a/ril/libril/ril.cpp
++++ b/ril/libril/ril.cpp
+@@ -181,6 +181,8 @@ static pthread_t s_tid_dispatch;
+ static pthread_t s_tid_reader;
+ static int s_started = 0;
+ 
++static int s_cpCrashed = 0;
++
+ static int s_fdDebug = -1;
+ static int s_fdDebug_socket2 = -1;
+ 
+@@ -5435,6 +5437,14 @@ void RIL_onUnsolicitedResponse(int unsolResponse, const void *data,
+         memcpy(s_lastNITZTimeData, p.data(), p.dataSize());
+     }
+ 
++    if (unsolResponse == RIL_UNSOL_AM) {
++        // "start -a android.intent.action.MAIN -n com.sec.app.RilErrorNotifier/.PhoneCrashNotifier --es title cpcrash"
++        if (strstr((const char*)data, "cpcrash")) {
++            RLOGE("CP crash detected");
++            s_cpCrashed = 1;
++        }
++    }
++
+     // Normal exit
+     return;
+ 
+@@ -5444,6 +5454,14 @@ error_exit:
+     }
+ }
+ 
++extern "C"
++int RIL_getCpCrashed()
++{
++    int result = s_cpCrashed;
++    s_cpCrashed = 0;
++    return result;
++}
++
+ /** FIXME generalize this if you track UserCAllbackInfo, clear it
+     when the callback occurs
+ */
+diff --git a/ril/libsecril-client/Android.mk b/ril/libsecril-client/Android.mk
+index 69a2f11..2c8e70b 100755
+--- a/ril/libsecril-client/Android.mk
++++ b/ril/libsecril-client/Android.mk
+@@ -18,6 +18,11 @@ LOCAL_CFLAGS :=
+ ifeq ($(TARGET_BOARD_PLATFORM),exynos4)
+ LOCAL_CFLAGS += -DRIL_CALL_AUDIO_PATH_EXTRAVOLUME
+ endif
++
++ifeq ($(TARGET_SOC),exynos3470)
++LOCAL_CFLAGS += -DRIL_CALL_AUDIO_PATH_EXTRAVOLUME
++endif
++
+ ifneq ($(filter m7450 mdm9x35 ss333 xmm7260,$(BOARD_MODEM_TYPE)),)
+ LOCAL_CFLAGS += -DSAMSUNG_NEXT_GEN_MODEM
+ endif
+-- 
+2.7.4
+
